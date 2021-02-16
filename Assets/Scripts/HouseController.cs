@@ -1,41 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HouseController : MonoBehaviour
 {
-   
     #region Propierties
     public  int ArrayIndex { get; private set; }
     public  int Level { get; private set; }
-    public  int MoneyGet { get; private set; }
+    public  int GettingCurrency { get; private set; }
+    public  int UpgradeCost { get; private set; }
     #endregion
     
     #region PrivateFields
-    private Animator _animator;
+    private int _baseGettingCurrency;
+    private int _baseUpgradeCoast;
     #endregion
     
-    #region UnityMethods
-    private void Start()
-    {
-        
-    }
-    #endregion
 
     #region PublicMethods
-    public void SetIndex(int index)
+    public void Initialize(int index, HouseType type)
     {
         ArrayIndex = index;
-        Level = 0;
-        MoneyGet = 10;
+        Level = 1;
+        _baseGettingCurrency = type.BaseGettingCurrency;
+        _baseUpgradeCoast = type.BaseUpgradeCoast;
+        GettingCurrency = _baseGettingCurrency;
+        UpgradeCost = _baseUpgradeCoast;
     }
-    
     public void Upgrade()
     {
+        GameController.Instance.SpendMoney(UpgradeCost);
         Level++;
-        MoneyGet += 20;
+        GettingCurrency += _baseGettingCurrency;
+        UpgradeCost = _baseUpgradeCoast * Level;
     }
-    
-    
     #endregion
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,8 +8,6 @@ public class GameController : MonoBehaviour
     
     #region InspectorFields
     [SerializeField] private GameConfig gameConfig;
-    [SerializeField] private float offsetBetweenImages;
-    [SerializeField] private float timeToNextLevel;
     [SerializeField] private HouseController[] houses;
     #endregion
     
@@ -20,16 +17,9 @@ public class GameController : MonoBehaviour
     #endregion
     
     #region Propierties
-    public int DoneScore { get; private set; }
-    public int WrongScore { get; private set; }
-    public int CurrentLevel { get; private set; }
     public int CurrentMoney { get; private set; }
-
     public HouseController[] Houses => houses;
-    #endregion
-    
-    #region PrivateFields
-
+    public int HumansSpawnRate => gameConfig.HumansSpawnRate;
     #endregion
 
     #region UnityMethods
@@ -46,12 +36,7 @@ public class GameController : MonoBehaviour
     }
     private void Start()
     {
-        for (var i = 0; i < houses.Length; i++)
-        {
-            var house = houses[i];
-            house.SetIndex(i);
-        }
-
+        InitializeHouses();
         CurrentMoney = 0;
         onDataChange?.Invoke();
     }
@@ -59,11 +44,17 @@ public class GameController : MonoBehaviour
     
 
     #region PublicMethods
-
-    
     public void HumanPaid(int houseId)
     {
-        CurrentMoney += houses[houseId].MoneyGet;
+        CurrentMoney += houses[houseId].GettingCurrency;
+        onDataChange?.Invoke();
+    }
+    
+    public void SpendMoney(int value)
+    {
+        CurrentMoney -= value;
+        if (CurrentMoney < 0)
+            CurrentMoney = 0;
         onDataChange?.Invoke();
     }
 
@@ -88,6 +79,20 @@ public class GameController : MonoBehaviour
     #endregion
 
     #region PrivateMethods
- 
+    private void InitializeHouses()
+    {
+        if (gameConfig.HouseTypes.Length >= houses.Length)
+        {
+            for (var i = 0; i < houses.Length; i++)
+            {
+                var house = houses[i];
+                house.Initialize(i, gameConfig.HouseTypes[i]);
+            }
+        }
+        else
+        {
+            Debug.LogError("HouseTypes in GameConfig less then houses count");
+        }
+    }
     #endregion
 }

@@ -6,39 +6,43 @@ using UnityEngine.AI;
 
 public class HumanController : MonoBehaviour
 {
+    #region InspectorFields
+    [SerializeField] private float destinationOffset = 2.5f;
+    #endregion
+    
+    #region PrivateFields
     private NavMeshAgent _agent;
-    private Vector3 currentEndPoint;
-    private Vector3 exitPoint;
+    private Vector3 _currentEndPoint;
+    private Vector3 _exitPoint;
     private bool _isGoToExit;
-    private Action onComeToHouse;
+    private Action _onComeToHouse;
+    #endregion
+    #region UnityMethods
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
     }
-
-    void Start()
+    private void Update()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if ((currentEndPoint - transform.position).magnitude < 2.5f)
+        if ((_currentEndPoint - transform.position).magnitude < destinationOffset)
         {
             EndDestination();
         }
     }
+    #endregion
 
+    #region PublicMethods
     public void SetupHuman(Vector3 housePoint, Vector3 exitPoint, Action endAction)
     {
-        onComeToHouse = endAction;
-        currentEndPoint = housePoint;
-        this.exitPoint = exitPoint;
-        _agent.destination = currentEndPoint;
+        _onComeToHouse = endAction;
+        _currentEndPoint = housePoint;
+        _exitPoint = exitPoint;
+        _agent.destination = _currentEndPoint;
         
     }
-
+    #endregion
+    
+    #region PrivateMethods
     private void EndDestination()
     {
         if (_isGoToExit)
@@ -47,10 +51,11 @@ public class HumanController : MonoBehaviour
         }
         else
         {
-            onComeToHouse?.Invoke();
+            _onComeToHouse?.Invoke();
             _isGoToExit = true;
-            currentEndPoint = exitPoint;
-            _agent.destination = currentEndPoint;
+            _currentEndPoint = _exitPoint;
+            _agent.destination = _currentEndPoint;
         }
     }
+    #endregion
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -26,15 +24,12 @@ public class UIController : MonoBehaviour
     #region PrivateMethods
     private void UpdateUi()
     {
-//        doneScoreTxt.text = $"{_gameController.DoneScore}";
-       //wrongScoreTxt.text = $"{_gameController.WrongScore}";
-       //levelTxt.text = $"Уровень {_gameController.CurrentLevel + 1}";
-       totalMoneyTxt.text = $"Денег всего {_gameController.CurrentMoney}";
+        totalMoneyTxt.text = $"Total Currency: {_gameController.CurrentMoney}$";
     }
     
     private void ShowUpgradeWindow(int houseId)
     {
-        upgradeWindow.Show(houseId);
+        upgradeWindow.Show(houseId, _gameController.Houses[houseId]);
     }
     #endregion
 }

@@ -1,21 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HumanSpawner : MonoBehaviour
 {
+    #region InspectorFields
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private GameObject humanPrefab;
-    private List<HumanController> _humans;
-    private float _spawnRate = 2f;
+    #endregion
+
+    #region PrivateFields
+    private GameController _gameController;
+    private float _spawnRate;
     private float _cooldown;
-    void Start()
+    #endregion
+    
+    #region UnityMethods
+    private void Start()
     {
-        _humans = new List<HumanController>();
-        
+        _gameController = GameController.Instance;
+        _spawnRate = _gameController.HumansSpawnRate;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (_cooldown <= 0)
@@ -25,15 +29,18 @@ public class HumanSpawner : MonoBehaviour
         }
         _cooldown -= Time.deltaTime;
     }
+    #endregion
 
+    #region PrivateMethods
     private void SpawnHuman()
     {
         var position = spawnPoint.position;
         var h = Instantiate(humanPrefab, position, Quaternion.identity);
-        var houseId = GameController.Instance.GetRandomHouseId();
-        h.GetComponent<HumanController>().SetupHuman(GameController.Instance.GetHousePosition(houseId), position, () =>
+        var houseId = _gameController.GetRandomHouseId();
+        h.GetComponent<HumanController>().SetupHuman(_gameController.GetHousePosition(houseId), position, () =>
         {
-            GameController.Instance.HumanPaid(houseId);
+            _gameController.HumanPaid(houseId);
         });
     }
+    #endregion
 }
